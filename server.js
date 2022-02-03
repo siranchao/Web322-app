@@ -17,8 +17,9 @@ const path = require("path")
 const blogService = require("./blog-service")
 
 //global constants
-const HTTP_PORT = process.env.port || 8080
-const app = express()
+var HTTP_PORT = process.env.port || 8080
+var app = express()
+
 const HTTPstart = () => {
     console.log(`Express http server is listening on port: ${HTTP_PORT}`);
 }

@@ -11,7 +11,7 @@ module.exports.initialize = () => {
         fs.readFile(path.join(__dirname, "/data/posts.json"), "utf-8", (err, data) => {
             if(err) {
                 console.log(`read posts file error: ${err}`);
-                reject(`Unable to read posts.json file`)
+                reject("Unable to read posts.json file")
             } else {
                 posts = JSON.parse(data)
 
@@ -19,7 +19,7 @@ module.exports.initialize = () => {
                 fs.readFile(path.join(__dirname, "/data/categories.json"), "utf-8", (err, data) => {
                     if(err) {
                         console.log(`read categories file error: ${err}`);
-                        reject(`Unable to read categories.json file`)
+                        reject("Unable to read categories.json file")
                     } else {
                         categories = JSON.parse(data)
                         resolve("data read successfully");

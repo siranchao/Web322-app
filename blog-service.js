@@ -22,7 +22,7 @@ module.exports.initialize = () => {
                         reject("Unable to read categories.json file")
                     } else {
                         categories = JSON.parse(data)
-                        resolve("data read successfully");
+                        resolve("data read success");
                     }
                 })
             }
@@ -59,5 +59,13 @@ module.exports.getCategories = () => {
         } else {
             resolve(categories)
         }
+    })
+}
+
+//add a new post to array
+module.exports.addPost = (newPost) => {
+    return new Promise((resolve, reject) => {
+        posts.push(newPost)
+        resolve()
     })
 }

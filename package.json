@@ -5,11 +5,15 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "devStart": "nodemon server.js"
   },
   "author": "Siran Cao",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.2"
+    "cloudinary": "^1.28.1",
+    "express": "^4.17.2",
+    "multer": "^1.4.4",
+    "streamifier": "^0.1.1"
   }
 }

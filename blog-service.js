@@ -65,7 +65,9 @@ module.exports.getCategories = () => {
 //add a new post to array
 module.exports.addPost = (newPost) => {
     return new Promise((resolve, reject) => {
+        newPost.published = (newPost.published == undefined) ? false : true;
+        newPost.id = posts.length + 1
         posts.push(newPost)
-        resolve()
+        resolve(newPost)
     })
 }

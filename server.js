@@ -15,6 +15,8 @@
 const express = require("express")
 const app = express()
 const path = require("path")
+const env = require('dotenv')
+env.config()
 const blogService = require("./blog-service")
 const multer = require("multer")
 const cloudinary = require("cloudinary").v2
@@ -63,13 +65,30 @@ app.get("/blog", (req, res) => {
 app.get("/posts", (req, res) => {
     blogService.getAllPosts()
     .then((data) => {
-        res.json(data)
+        if(req.query.category){
+            ////
+
+        }
+        else if(req.query.minDate){
+            ////
+        }
+        else{
+            res.json(data)
+        }
     })
     .catch((err) => {
         console.log(err);
         res.send(`Error Message: ${err}`)
     })
 })
+
+app.get("/post/value", (req, res) => {
+    
+    //This route will return a JSON formatted string containing a single post whose id matches the value.  This can be accomplished by calling the getPostById(id) function 
+    
+    //res.json()
+})
+
 
 app.get("/categories", (req, res) => {
     blogService.getCategories()
@@ -108,18 +127,14 @@ app.post("/posts/add", upload.single("featureImage"), (req, res) => {
     
     upload(req).then((uploaded)=>{
         req.body.featureImage = uploaded.url;
-        // TODO: Process the req.body and add it as a new Blog Post before redirecting to /posts
-        console.log(req.body)
-        
-        // blogService.addPost(req.body).then(data => {
-        //     res.redirect("/post")
-        // }).catch(err => {
-        //     res.status(500).send(err)
-        // })
-    
+
+        blogService.addPost(req.body).then(data => {
+            console.log(data)
+            res.redirect("/posts")
+        }).catch(err => {
+            res.status(500).send(err)
+        })
     });
-    
-    
 })
 
 

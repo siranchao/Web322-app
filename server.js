@@ -5,7 +5,7 @@
 * 
 *  Name: Siran Cao     Student ID: 159235209     Date: 02/18/2022
 *
-*  Online (Heroku) URL: https://obscure-basin-05422.herokuapp.com/about
+*  Online (Heroku) URL:  https://obscure-basin-05422.herokuapp.com/
 *
 *  GitHub Repository URL: https://github.com/siranchao/Web322-app
 *
@@ -66,17 +66,35 @@ app.get("/posts", (req, res) => {
     
     if(req.query.category){
         blogService.getPostsByCategory(req.query.category)
-        .then(data => res.json(data))
+        .then(data => {
+            if(data.length == 0) {
+                res.send("No results found")
+            } else {
+                res.json(data)
+            }
+        })
         .catch(err => console.log(err))
     }
     else if(req.query.minDate){
         blogService.getPostsByMinDate(req.query.minDate)
-        .then(data => res.json(data))
+        .then(data => {
+            if(data.length == 0) {
+                res.send("No results found")
+            } else {
+                res.json(data)
+            }
+        })
         .catch(err => console.log(err))
     }
     else{
         blogService.getAllPosts()
-        .then(data => res.json(data))
+        .then(data => {
+            if(data === undefined) {
+                res.send("No results found")
+            } else {
+                res.json(data)
+            }
+        })
         .catch(err => console.log(err))
     }
 })

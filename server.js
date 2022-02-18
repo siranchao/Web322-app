@@ -3,7 +3,7 @@
 *  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source 
 *  (including 3rd party web sites) or distributed to other students.
 * 
-*  Name: Siran Cao     Student ID: 159235209     Date: 02/03/2022
+*  Name: Siran Cao     Student ID: 159235209     Date: 02/18/2022
 *
 *  Online (Heroku) URL: https://obscure-basin-05422.herokuapp.com/about
 *
@@ -63,30 +63,28 @@ app.get("/blog", (req, res) => {
 })
 
 app.get("/posts", (req, res) => {
-    blogService.getAllPosts()
-    .then((data) => {
-        if(req.query.category){
-            ////
-
-        }
-        else if(req.query.minDate){
-            ////
-        }
-        else{
-            res.json(data)
-        }
-    })
-    .catch((err) => {
-        console.log(err);
-        res.send(`Error Message: ${err}`)
-    })
+    
+    if(req.query.category){
+        blogService.getPostsByCategory(req.query.category)
+        .then(data => res.json(data))
+        .catch(err => console.log(err))
+    }
+    else if(req.query.minDate){
+        blogService.getPostsByMinDate(req.query.minDate)
+        .then(data => res.json(data))
+        .catch(err => console.log(err))
+    }
+    else{
+        blogService.getAllPosts()
+        .then(data => res.json(data))
+        .catch(err => console.log(err))
+    }
 })
 
-app.get("/post/value", (req, res) => {
-    
-    //This route will return a JSON formatted string containing a single post whose id matches the value.  This can be accomplished by calling the getPostById(id) function 
-    
-    //res.json()
+app.get("/post/:value", (req, res) => {
+    blogService.getPostsById(req.params.value)
+    .then(data => res.json(data))
+    .catch(err => console.log(err))
 })
 
 
@@ -136,12 +134,6 @@ app.post("/posts/add", upload.single("featureImage"), (req, res) => {
         })
     });
 })
-
-
-
-
-
-
 
 
 

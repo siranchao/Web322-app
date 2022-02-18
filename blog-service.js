@@ -1,4 +1,6 @@
+const { resolveObjectURL } = require("buffer")
 const fs = require("fs")
+const { resolve } = require("path")
 const path = require("path")
 
 let posts = []
@@ -69,5 +71,42 @@ module.exports.addPost = (newPost) => {
         newPost.id = posts.length + 1
         posts.push(newPost)
         resolve(newPost)
+    })
+}
+
+
+module.exports.getPostsByCategory = (category) => {
+    return new Promise((resolve, reject) => {
+        if(posts.length == 0) {
+            reject("no results returned")
+        } else {
+            resolve(posts.filter(ele => ele.category == category))
+        }
+    })
+}
+
+module.exports.getPostsByMinDate = (minDate) => {
+    return new Promise((resolve, reject) => {
+        if(posts.length == 0) {
+            reject("no results returned")
+        } else {
+            const postArr = []
+            for(i = 0; i < posts.length; i++) {
+                if(new Date(posts[i].postDate) >= new Date(minDate))
+                    postArr.push(posts[i])
+            }
+            // const postArr = posts.filter(ele => new Date(ele.postDate) >= new Date(minDate))
+            resolve(postArr)
+        }
+    })
+}
+
+module.exports.getPostsById = (id) => {
+    return new Promise((resolve, reject) => {
+        if(posts.length == 0) {
+            reject("no results returned")
+        } else {
+            resolve(posts.find(ele => ele.id == id))
+        }
     })
 }

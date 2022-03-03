@@ -1,5 +1,5 @@
 /*********************************************************************************
-*  WEB322 – Assignment 03
+*  WEB322 – Assignment 04
 *  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source 
 *  (including 3rd party web sites) or distributed to other students.
 * 
@@ -11,17 +11,19 @@
 *
 ********************************************************************************/ 
 
-//imports modules 
+////import modules////
 const express = require("express")
 const app = express()
-const path = require("path")
-const env = require('dotenv')
+const env = require("dotenv")
 env.config()
-const blogService = require("./blog-service")
+const hbs = require("express-handlebars")
 const multer = require("multer")
+const path = require("path")
 const cloudinary = require("cloudinary").v2
 const streamifier = require("streamifier")
+const blogService = require("./blog-service")
 
+//config cloudinary
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.CLOUD_API_KEY,
@@ -35,20 +37,51 @@ const HTTPstart = () => {
     console.log(`Express http server is listening on port: ${HTTP_PORT}`);
 }
 
-//static files
+//setting middleware and static files
 app.use(express.static("public"))
 
-//multer middleware
 const upload = multer()
 
+app.use((req,res,next) => {
+    let route = req.path.substring(1);
+    app.locals.activeRoute = (route == "/") ? "/" : "/" + route.replace(/\/(.*)/, "");
+    app.locals.viewingCategory = req.query.category;
+    next();
+});
 
-//setting routes
+
+//config handlebars
+app.engine(".hbs", hbs.engine({
+    extname: ".hbs",
+    defaultLayout: "main",
+    helpers: {
+        navLink: (url, options) => {
+        return `<li ${(url == app.locals.activeRoute) ? "class='active'" : ""}><a href="${url}">${options.fn(this)}</a></li>`
+        },
+        equal: (lvalue, rvalue, options) => {
+            if (arguments.length < 3)
+                throw new Error("Handlebars Helper equal needs 2 parameters")
+            if (lvalue != rvalue) {
+                return options.inverse(this)
+            } else {
+                return options.fn(this)
+            }
+        }
+    }
+}))
+app.set("view engine", ".hbs")
+
+
+////setting routes////
 app.get("/", (req, res) => {
     res.redirect("/about")
 })
 
 app.get("/about", (req, res) => {
-    res.sendFile(path.join(__dirname, "/views/about.html"))
+    res.render("about", {
+        data: null,
+        layout: "main"
+    })
 })
 
 app.get("/blog", (req, res) => {
@@ -63,7 +96,6 @@ app.get("/blog", (req, res) => {
 })
 
 app.get("/posts", (req, res) => {
-    
     if(req.query.category){
         blogService.getPostsByCategory(req.query.category)
         .then(data => {
@@ -117,11 +149,14 @@ app.get("/categories", (req, res) => {
     })
 })
 
-app.get("/posts/add", (req, res) => {
-    res.sendFile(path.join(__dirname, "/views/addPost.html"))
+app.get("/addPost", (req, res) => {
+    res.render("addPost", {
+        data: null,
+        layout: "main"
+    })
 })
 
-app.post("/posts/add", upload.single("featureImage"), (req, res) => {
+app.post("/addPost", upload.single("featureImage"), (req, res) => {
     let streamUpload = (req) => {
         return new Promise((resolve, reject) => {
             let stream = cloudinary.uploader.upload_stream((error, result) => {

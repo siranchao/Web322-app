@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-md-12">
+    {{#unless posts}}
+      <div class="col-md-12 text-center" style=" margin: 30px auto;">
+        <h2>{{message}}</h2>
+      </div>
+    {{/unless}}
+
+    <h2>Posts</h2>
+    <hr />
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Post&nbsp;ID</th>
+            <th>Title</th>
+            <th>Post&nbsp;Date</th>
+            <th>Category</th>
+            <th>Published</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {{#each posts}}
+            <tr>
+              <td>{{id}}</td>
+              <td><a href="/blog/{{id}}?category={{../viewingCategory}}" target="_blank">{{title}}</a></td>
+              <td>{{postDate}}</td>
+              <td><a
+                  href="/posts?category={{category}}"
+                  target="_blank"
+                >{{category}}</a></td>
+              <td>{{published}}</td>
+            </tr>
+          {{else}}
+            <tr>
+              <td>No Post Information</td>
+            </tr>
+          {{/each}}
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>

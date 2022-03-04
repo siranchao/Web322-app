@@ -1,4 +1,5 @@
 const { resolveObjectURL } = require("buffer")
+const e = require("express")
 const fs = require("fs")
 const { resolve } = require("path")
 const path = require("path")
@@ -35,7 +36,7 @@ module.exports.initialize = () => {
 module.exports.getAllPosts = () => {
     return new Promise((resolve, reject) => {
         if(posts.length == 0) {
-            reject(`no results returned`)
+            reject(`no post results`)
         } else {
             resolve(posts)
         }
@@ -45,7 +46,7 @@ module.exports.getAllPosts = () => {
 module.exports.getPublishedPosts = () => {
     return new Promise((resolve, reject) => {
         if(posts.length == 0) {
-            reject(`no results returned`)
+            reject(`no post results`)
         } else {
             resolve(posts.filter(ele => 
                 ele.published == true
@@ -57,7 +58,7 @@ module.exports.getPublishedPosts = () => {
 module.exports.getCategories = () => {
     return new Promise((resolve, reject) => {
         if(categories.length == 0) {
-            reject(`no results returned`)
+            reject(`no category results`)
         } else {
             resolve(categories)
         }
@@ -67,8 +68,13 @@ module.exports.getCategories = () => {
 //add a new post to array
 module.exports.addPost = (newPost) => {
     return new Promise((resolve, reject) => {
+        const today = new Date()
+        const dd = String(today.getDate()).padStart(2, '0')
+        const mm = String(today.getMonth() + 1).padStart(2, '0')
+        const yyyy = today.getFullYear()
         newPost.published = (newPost.published == undefined) ? false : true;
         newPost.id = posts.length + 1
+        newPost.postDate = `${yyyy}-${mm}-${dd}`
         posts.push(newPost)
         resolve(newPost)
     })
@@ -107,6 +113,18 @@ module.exports.getPostsById = (id) => {
             reject("no results returned")
         } else {
             resolve(posts.find(ele => ele.id == id))
+        }
+    })
+}
+
+module.exports.getPublishedPostsByCategory = (category) => {
+    return new Promise((resolve, reject) => {
+        if(posts.length == 0) {
+            reject(`no post results`)
+        } else {
+            resolve(posts.filter(ele => 
+                ele.published == true && ele.category == category
+            ))
         }
     })
 }

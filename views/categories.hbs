@@ -6,7 +6,7 @@
       </div>
     {{/unless}}
 
-    <h2>Categories</h2>
+    <h2>Categories<a href="/categories/add" class="btn btn-success pull-right">Add Category</a></h2>
     <hr />
 
     <div class="table-responsive">
@@ -21,11 +21,9 @@
         <tbody>
           {{#each categories}}
             <tr>
-              <td><a href="/posts?category={{id}}">{{id}}</a>
-              </td>
-              <td><a href="/posts?category={{id}}">{{category}}</a>
-              </td>
-
+              <td><a href="/posts?category={{id}}">{{id}}</a></td>
+              <td><a href="/posts?category={{id}}">{{category}}</a></td>
+              <td><a class="btn btn-danger" href="/categories/delete/{{id}}">Remove</a></td>
             </tr>
           {{else}}
             <tr>

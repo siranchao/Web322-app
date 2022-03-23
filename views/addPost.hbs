@@ -2,7 +2,7 @@
   <div class="col-md-12">
     <h2>Add Post</h2>
     <br />
-    <form method="post" action="/addPost" enctype="multipart/form-data">
+    <form method="post" action="/posts/add" enctype="multipart/form-data">
       <fieldset>
         <legend>Feature Image</legend>
         <div class="row">
@@ -13,6 +13,7 @@
                 id="featureImage"
                 name="featureImage"
                 type="file"
+                required
               />
             </div>
           </div>
@@ -46,13 +47,16 @@
           <div class="col-md-6">
             <div class="form-group">
               <label for="category">Category:</label>
-              <select class="form-control" name="category" id="category">
-                <option value="1">Technology</option>
-                <option value="2">Gaming</option>
-                <option value="3">Fashion</option>
-                <option value="4">Education</option>
-                <option value="5">Wellness</option>
-              </select>
+              {{#if categories}}
+                <select class="form-control" name="category" id="category" required>
+                  <option value="" disabled selected>Select Category</option>
+                  {{#each categories}}
+                    <option value="{{id}}">{{category}}</option>
+                  {{/each}}
+                </select>
+              {{else}}
+                <div>No Categories</div>
+              {{/if}}
             </div>
           </div>
           <div class="col-md-6">

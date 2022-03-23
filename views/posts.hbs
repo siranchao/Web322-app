@@ -6,7 +6,7 @@
       </div>
     {{/unless}}
 
-    <h2>Posts</h2>
+    <h2>Posts<a href="/posts/add" class="btn btn-success pull-right">Add Post</a></h2>
     <hr />
 
     <div class="table-responsive">
@@ -25,13 +25,13 @@
           {{#each posts}}
             <tr>
               <td>{{id}}</td>
-              <td><a href="/blog/{{id}}?category={{../viewingCategory}}" target="_blank">{{title}}</a></td>
-              <td>{{postDate}}</td>
+              <td><a href="/blog/{{id}}" target="_blank">{{title}}</a></td>
+              <td>{{#formatDate postDate}}{{/formatDate}}</td>
               <td><a
                   href="/posts?category={{category}}"
-                  target="_blank"
                 >{{category}}</a></td>
               <td>{{published}}</td>
+              <td><a class="btn btn-danger" href="/posts/delete/{{id}}">Remove</a></td>
             </tr>
           {{else}}
             <tr>

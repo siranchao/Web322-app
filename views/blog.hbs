@@ -16,7 +16,7 @@
       <strong>Category:</strong>
       {{data.post.category}}<br />
       <strong>Last Updated:</strong>
-      {{data.post.postDate}}
+      {{#formatDate data.post.postDate}}{{/formatDate}}
     </article>
     {{/if}}
 

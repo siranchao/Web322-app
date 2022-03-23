@@ -1,32 +1,32 @@
 const Sequelize = require("sequelize")
-const env = require("dotenv")
-env.config()
+// const env = require("dotenv")
+// env.config()
 
 //config sequelize DB
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: "postgres",
-    port: 5432,
-    dialectOption: {
-        ssl: { rejectUnauthorized: false }
-    },
-    query: { raw: true }
-})
+// const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+//     host: process.env.DB_HOST,
+//     dialect: "postgres",
+//     port: 5432,
+//     dialectOption: {
+//         ssl: { rejectUnauthorized: false }
+//     },
+//     query: { raw: true }
+// })
 
-// const sequelize = new Sequelize(
-//     "demvclt4qfinji",
-//     "lkachjoltkocoe",
-//     "891f0f14103ee343df0a53c260eded1508c86dc97cacef237a232b2d47ec62e8",
-//     {
-//         host: "ec2-18-210-191-5.compute-1.amazonaws.com",
-//         dialect: "postgres",
-//         port: 5432,
-//         dialectOptions: {
-//             ssl: { rejectUnauthorized: false },
-//         },
-//         query: { raw: true },
-//     }
-// );
+const sequelize = new Sequelize(
+    "demvclt4qfinji",
+    "lkachjoltkocoe",
+    "891f0f14103ee343df0a53c260eded1508c86dc97cacef237a232b2d47ec62e8",
+    {
+        host: "ec2-18-210-191-5.compute-1.amazonaws.com",
+        dialect: "postgres",
+        port: 5432,
+        dialectOptions: {
+            ssl: { rejectUnauthorized: false },
+        },
+        query: { raw: true },
+    }
+);
 
 sequelize
     .authenticate()

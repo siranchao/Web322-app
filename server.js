@@ -1,9 +1,9 @@
 /*********************************************************************************
- *  WEB322 – Assignment 05
+ *  WEB322 – Assignment 06
  *  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source
  *  (including 3rd party web sites) or distributed to other students.
  *
- *  Name: Siran Cao     Student ID: 159235209     Date: 03/23/2022
+ *  Name: Siran Cao     Student ID: 159235209     Date: 04/08/2022
  *
  *  Online (Heroku) URL:  https://aqueous-waters-04406.herokuapp.com/
  *
@@ -24,6 +24,8 @@ const stripJs = require("strip-js")
 const cloudinary = require("cloudinary").v2
 const streamifier = require("streamifier")
 const blogService = require("./blog-service")
+const authData = require("./auth-service")
+const clientSessions = require("client-sessions")
 
 //config cloudinary
 cloudinary.config({
@@ -35,22 +37,7 @@ cloudinary.config({
 
 //setting PORT number
 const HTTP_PORT = process.env.PORT || 8080
-const HTTPstart = () => {
-    console.log(`Express http server is listening on port: ${HTTP_PORT}`)
-}
-
-//setting middleware and static files
-app.use(express.static("public"))
-
-app.use((req, res, next) => {
-    let route = req.path.substring(1)
-    app.locals.activeRoute =
-        route == "/" ? "/" : "/" + route.replace(/\/(.*)/, "")
-    app.locals.viewingCategory = req.query.category
-    next()
-})
-
-app.use(express.urlencoded({ extended: true }))
+const HTTPstart = () => { console.log(`Express http server is listening on port: ${HTTP_PORT}`) }
 
 //config handlebars and helpers
 app.engine(
@@ -87,7 +74,40 @@ app.engine(
 )
 app.set("view engine", ".hbs")
 
+//setting middleware and static files
+app.use(express.static("public"))
 
+app.use(clientSessions({
+    cookieName: "session",
+    secret: "web322_siran_blog",
+    duration: 1000 * 60 * 5, //5 mins session
+    activeDuration: 1000 * 60, //extent 1 min by each request
+}))
+
+app.use((req, res, next) => {
+    res.locals.session = req.session
+    next()
+})
+
+//check authentication
+const ensureLogin = (req, res, next) => {
+    if (!req.session.user) {
+        res.redirect("/login")
+    } else {
+        next()
+    }
+}
+
+app.use((req, res, next) => {
+    let route = req.path.substring(1)
+    app.locals.activeRoute =
+        route == "/" ? "/" : "/" + route.replace(/\/(.*)/, "")
+    app.locals.viewingCategory = req.query.category
+    next()
+})
+
+// for form data without file
+app.use(express.urlencoded({ extended: true }))
 
 ////setting routes////
 app.get("/", (req, res) => {
@@ -95,10 +115,52 @@ app.get("/", (req, res) => {
 })
 
 app.get("/about", (req, res) => {
-    res.render("about", {
-        data: null,
-        layout: "main",
-    })
+    res.render("about", { data: null })
+})
+
+app.get("/login", (req, res) => {
+    res.render("login", { data: null })
+})
+
+app.get("/register", (req, res) => {
+    res.render("register", { data: null })
+})
+
+app.post("/register", (req, res) => {
+    authData
+        .registerUser(req.body)
+        .then(() => {
+            res.render("register", { data: { successMessage: "User Created" } })
+        })
+        .catch(err => {
+            res.render("register", { data: { errorMessage: err, userName: req.body.userName } })
+        })
+})
+
+app.post("/login", (req, res) => {
+    req.body.userAgent = req.get("User-Agent")
+    authData
+        .checkUser(req.body)
+        .then(user => {
+            req.session.user = {
+                userName: user.userName,
+                email: user.email,
+                loginHistory: user.loginHistory
+            }
+            res.redirect("/posts")
+        })
+        .catch(err => {
+            res.render("login", { data: { message: err, userName: req.body.userName } })
+        })
+})
+
+app.get("/logout", (req, res) => {
+    req.session.reset()
+    res.redirect("/")
+})
+
+app.get("/userHistory", ensureLogin, (req, res) => {
+    res.render("userHistory", { data: null })
 })
 
 app.get("/blog", async (req, res) => {
@@ -168,7 +230,7 @@ app.get("/blog/:id", async (req, res) => {
     res.render("blog", { data: viewData })
 })
 
-app.get("/posts", (req, res) => {
+app.get("/posts", ensureLogin, (req, res) => {
     if (req.query.category) {
         blogService
             .getPostsByCategory(req.query.category)
@@ -211,14 +273,14 @@ app.get("/posts", (req, res) => {
     }
 })
 
-app.get("/post/:value", (req, res) => {
+app.get("/post/:value", ensureLogin, (req, res) => {
     blogService
         .getPostsById(req.params.value)
         .then((data) => res.json(data))
         .catch((err) => console.log(err))
 })
 
-app.get("/categories", (req, res) => {
+app.get("/categories", ensureLogin, (req, res) => {
     blogService
         .getCategories()
         .then(data => {
@@ -233,7 +295,7 @@ app.get("/categories", (req, res) => {
         })
 })
 
-app.get("/posts/add", (req, res) => {
+app.get("/posts/add", ensureLogin, (req, res) => {
     blogService
         .getCategories()
         .then(data => {
@@ -244,7 +306,7 @@ app.get("/posts/add", (req, res) => {
         })
 })
 
-app.post("/posts/add", upload.single("featureImage"), (req, res) => {
+app.post("/posts/add", ensureLogin, upload.single("featureImage"), (req, res) => {
     let streamUpload = (req) => {
         return new Promise((resolve, reject) => {
             let stream = cloudinary.uploader.upload_stream((error, result) => {
@@ -276,14 +338,14 @@ app.post("/posts/add", upload.single("featureImage"), (req, res) => {
     })
 })
 
-app.get("/categories/add", (req, res) => {
+app.get("/categories/add", ensureLogin, (req, res) => {
     res.render("addCategory", {
         data: null,
         layout: "main",
     })
 })
 
-app.post("/categories/add", (req, res) => {
+app.post("/categories/add", ensureLogin, (req, res) => {
     blogService
         .addCategory(req.body)
         .then(data => {
@@ -295,7 +357,7 @@ app.post("/categories/add", (req, res) => {
         })
 })
 
-app.get("/categories/delete/:id", (req, res) => {
+app.get("/categories/delete/:id", ensureLogin, (req, res) => {
     blogService.deleteCategoryById(req.params.id)
         .then(() => {
             res.redirect("/categories")
@@ -306,7 +368,7 @@ app.get("/categories/delete/:id", (req, res) => {
         })
 })
 
-app.get("/posts/delete/:id", (req, res) => {
+app.get("/posts/delete/:id", ensureLogin, (req, res) => {
     blogService.deletePostById(req.params.id)
         .then(() => {
             res.redirect("/posts")
@@ -316,8 +378,6 @@ app.get("/posts/delete/:id", (req, res) => {
             res.status(500).send("Unable to Remove Post / Post not found")
         })
 })
-
-
 
 app.use((req, res) => {
     res.status(404).render("404", {
@@ -329,10 +389,11 @@ app.use((req, res) => {
 //listening on port
 blogService
     .initialize()
-    .then((msg) => {
+    .then(authData.initialize)
+    .then(msg => {
         console.log(`server start: ${msg}`)
         app.listen(HTTP_PORT, HTTPstart)
     })
-    .catch((err) => {
+    .catch(err => {
         console.log(err)
     })

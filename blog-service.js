@@ -69,10 +69,8 @@ module.exports.getAllPosts = () => {
         Post.findAll(
             { order: ["id"] },
         ).then(data => {
-            console.log("Operation success")
             resolve(data)
         }).catch(err => {
-            console.log(`Operation failed: ${err}`)
             reject("no results returned")
         })
     })
@@ -81,13 +79,10 @@ module.exports.getAllPosts = () => {
 module.exports.getPublishedPosts = () => {
     return new Promise((resolve, reject) => {
         Post.findAll(
-            { order: ["id"] },
             { where: { published: true } }
         ).then(data => {
-            console.log("Operation success")
             resolve(data)
         }).catch(err => {
-            console.log(`Operation failed: ${err}`)
             reject("no results returned")
         })
     })
@@ -102,11 +97,9 @@ module.exports.getPublishedPostsByCategory = (categoryNum) => {
         },
             { order: ["id"] }
         ).then(data => {
-            console.log("Operation success")
             resolve(data)
         }).catch(err => {
             console.log(`Operation failed: ${err}`)
-            reject("no results returned")
         })
     })
 }
@@ -116,10 +109,8 @@ module.exports.getCategories = () => {
         Category.findAll(
             { order: ["id"] }
         ).then(data => {
-            console.log("Operation success")
             resolve(data)
         }).catch(err => {
-            console.log(`Operation failed: ${err}`)
             reject("no results returned")
         })
     })
@@ -134,10 +125,8 @@ module.exports.getPostsByCategory = (categoryNum) => {
         },
             { order: ["id"] }
         ).then(data => {
-            console.log("Operation success")
             resolve(data)
         }).catch(err => {
-            console.log(`Operation failed: ${err}`)
             reject("no results returned")
         })
     })
@@ -150,10 +139,8 @@ module.exports.getPostsByMinDate = (minDate) => {
             { order: ["id"] },
             { where: { postDate: { [Op.gte]: new Date(minDate) } } }
         ).then(data => {
-            console.log("Operation success")
             resolve(data)
         }).catch(err => {
-            console.log(`Operation failed: ${err}`)
             reject("no results returned")
         })
     })
@@ -164,10 +151,8 @@ module.exports.getPostsById = (postID) => {
         Post.findOne(
             { where: { id: postID } }
         ).then(data => {
-            console.log("Operation success")
             resolve(data)
         }).catch(err => {
-            console.log(`Operation failed: ${err}`)
             reject("no results returned")
         })
     })

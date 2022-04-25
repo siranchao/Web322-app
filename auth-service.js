@@ -12,13 +12,13 @@ const userSchema = new Schema({
     email: String,
     loginHistory: [{ dateTime: Date, userAgent: String }]
 })
-
+https://github.com/siranchao/Web322-app/blob/main/auth-service.js
 //create object model for the schema
 let User;
 module.exports.initialize = () => {
     return new Promise((resolve, reject) => {
         //connect to mongoDB
-        let db = mongoose.connect("mongodb+srv://siranchao:Lynn_9989@senecaweb.rm2yv.mongodb.net/Test-DB?retryWrites=true&w=majority");
+        let db = mongoose.connect("xxxx--mongoDB--userURL");
         if (db) {
             User = mongoose.model("users", userSchema)
             console.log(`mongoDB connection successful`);

@@ -1,5 +1,5 @@
-# Web322-app 
-Application for Web322 project: My personal blog site
+# Web322-WebApp - My Blog Site
+Application for Web322 project (this website is for study purposes only)
 - URL:  https://aqueous-waters-04406.herokuapp.com/
 
 

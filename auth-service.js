@@ -18,7 +18,7 @@ let User;
 module.exports.initialize = () => {
     return new Promise((resolve, reject) => {
         //connect to mongoDB
-        let db = mongoose.connect("mongodb+srv://siranchao:Lynn_9989@senecaweb.rm2yv.mongodb.net/Test-DB?retryWrites=true&w=majority");
+        let db = mongoose.connect(process.env.MONGO_URL);
         if (db) {
             User = mongoose.model("users", userSchema)
             console.log(`mongoDB connection successful`);

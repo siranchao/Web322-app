@@ -5,8 +5,6 @@
  *
  *  Name: Siran Cao     Student ID: 159235209     Date: 04/08/2022
  *
- *  Online (Heroku) URL:  https://aqueous-waters-04406.herokuapp.com/
- *
  *  GitHub Repository URL: https://github.com/siranchao/Web322-app
  *
  ********************************************************************************/

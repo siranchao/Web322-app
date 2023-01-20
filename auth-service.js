@@ -12,7 +12,7 @@ const userSchema = new Schema({
     email: String,
     loginHistory: [{ dateTime: Date, userAgent: String }]
 })
-
+https://github.com/siranchao/Web322-app/blob/main/auth-service.js
 //create object model for the schema
 let User;
 module.exports.initialize = () => {
